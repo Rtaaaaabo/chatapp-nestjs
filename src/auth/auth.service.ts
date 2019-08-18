@@ -18,11 +18,53 @@ export class AuthService {
         });
     }
 
-    private async createUser(userData: User) {
+    private async createUser(userData: User): Promise<User> {
         return this.userService.create(userData).then(user => {
             const userId = `${user.name}${user.id}`;
             const roomId = 'c33cbe78-f668-4fa2-ba50-5bd09dd7faf9';
             const avatarUrl = 'https://image.flaticon.com/icons/png/128/149/149071.png';
-        })
+
+            return this.chatKit.createUser({
+                id: userId,
+                name: user.name,
+                avatarURL: avatarUrl,
+            }).then(() => {
+                return this.chatKit.addUsersToRoom({
+                    roomId: roomId,
+                    userIds: [userId],
+                }).then(() => {
+                    return user;
+                });
+            });
+        });
     }
+
+    public getToken(userId: string): AuthenticationResponse {
+        return this.chatKit.authenticate({ userId: userId });
+    }
+
+    private async validateUser(userData: User): Promise<User> {
+        return await this.userService.findByEmail(userData.email);
+    }
+
+    public async register(user: User): Promise<any> {
+        return this.createUser(user);
+    }
+
+    public async login(user: User): Promise<any | { status: number } {
+        return this.validateUser(user).then((userInfo) => {
+            if (!userInfo) {
+                return { status: 404 };
+            }
+            let userId = `${userInfo.name}${userInfo.id}`;
+            const acceeToken = this.jwtService.sign(userId);
+            return {
+                expires_in: 3600,
+                access_token: acceeToken,
+                user_id: userId,
+                status: 200,
+            };
+        });
+    }
+
 }
