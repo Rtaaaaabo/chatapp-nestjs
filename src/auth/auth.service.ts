@@ -48,6 +48,7 @@ export class AuthService {
     }
 
     public async register(user: User): Promise<any> {
+        console.log(user);
         return this.createUser(user);
     }
 

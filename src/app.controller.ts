@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body, Request } from '@nestjs/common';
 import { AuthService } from './auth/auth.service';
 import { User } from './models/user.entity';
-import { async } from 'rxjs/internal/scheduler/async';
 
 @Controller()
 export class AppController {
