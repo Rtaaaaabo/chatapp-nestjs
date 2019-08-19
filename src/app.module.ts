@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { UserService } from './user/user.service';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthService } from './auth/auth.service';
+import { User } from './models/user.entity';
 
 @Module({
   imports: [
@@ -16,7 +17,8 @@ import { AuthService } from './auth/auth.service';
     }),
     JwtModule.register({
       secretOrPrivateKey: 'secret123',
-    })
+    }),
+    TypeOrmModule.forFeature([User]),
   ],
   controllers: [AppController],
   providers: [AppService, UserService, AuthService],

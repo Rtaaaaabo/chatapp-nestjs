@@ -51,7 +51,7 @@ export class AuthService {
         return this.createUser(user);
     }
 
-    public async login(user: User): Promise<any | { status: number } {
+    public async login(user: User): Promise<any | { status: number }> {
         return this.validateUser(user).then((userInfo) => {
             if (!userInfo) {
                 return { status: 404 };
